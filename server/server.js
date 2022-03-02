@@ -5,12 +5,13 @@ const cors = require('cors');
 require("dotenv").config({ path: __dirname + "/../.env" });
 const PORT = process.env.PORT;
 
-//middleware
+// MIDDLEWARES
 app.use(express.json())
 app.use(cors())
 
-//routes
-
+// ROUTES
+// Signup and Login Routes
+app.use("/auth", require("./app/Routes/jwtAuth"))
 
 //listener
 app.listen(PORT, () => {
