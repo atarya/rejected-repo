@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+require('dotenv').config({ path: __dirname + "/../../.env" });
 
-jwtGenerator = () => {
+function jwtGenerator(user_id) {
 
     // choosing reference for the token
     const payload = {
