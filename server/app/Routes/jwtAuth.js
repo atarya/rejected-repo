@@ -2,8 +2,9 @@ const pool = require('./../../config/db.config');
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwtGenerator = require('./../Utils/jwtGenerator');
+const validInfo = require('./../Middlewares/validInfo');
 
-router.post("/register", async (req, res) => {
+router.post("/register", validInfo, async (req, res) => {
 
     try {
         // extract data from request body
@@ -36,7 +37,7 @@ router.post("/register", async (req, res) => {
 
 })
 
-router.post("/login", async (req, res) => {
+router.post("/login", validInfo, async (req, res) => {
     try {
         // destructure data from request body
         const { user_email, user_password } = req.body;
