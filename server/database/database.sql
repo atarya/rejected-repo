@@ -4,7 +4,7 @@ CREATE DATABASE bookstore_db;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 \c bookstore_db; -- connect to the database in psql
-
+\dt -- show tables
 -- changing password
 ALTER USER user_name WITH PASSWORD 'new_password';
 
