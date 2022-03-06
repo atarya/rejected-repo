@@ -8,9 +8,11 @@ module.exports = async (req, res, next) => {
             return res.status(401).json({
                 message: "Access denied. No token provided."
             });
+        } else {
+            const payload = jwt.verify(jwtToken, process.env.JWT_SECRET);
+            req.user_id = payload.user_id;
         }
-        const payload = jwt.verify(jwtToken, process.env.JWT_SECRET);
-        req.user_id = payload.user_id;
+        next();
     } catch (error) {
         console.error(error.message);
         res.status(403).send("Server Error");

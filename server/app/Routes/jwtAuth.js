@@ -3,6 +3,7 @@ const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwtGenerator = require('./../Utils/jwtGenerator');
 const validInfo = require('./../Middlewares/validInfo');
+const authorization = require('./../Middlewares/authorization');
 
 router.post("/register", validInfo, async (req, res) => {
 
@@ -15,20 +16,20 @@ router.post("/register", validInfo, async (req, res) => {
         // console.log(typeof user); returns object
         // console.log(user.rows);
         if (user.rows.length !== 0) {
-            res.status(401).send("User already exists");
+            res.status(401).json("User already exists");
+        } else {
+
+            // bcrypt the user password        const saltRound = 10; // Try randomising the salt rounds
+            const salt = await bcrypt.genSalt(saltRound);
+            const bcryptPassword = await bcrypt.hash(user_password, salt); // encrypted password
+
+            // insert user into database
+            const newUser = await pool.query("INSERT INTO users (user_name, user_email, user_password) VALUES ($1, $2, $3) RETURNING *", [user_name, user_email, bcryptPassword]);
+
+            // generate jwt token
+            const token = jwtGenerator(newUser.rows[0].user_id);
+            res.json({ token });
         }
-
-        // bcrypt the user password
-        const saltRound = 10; // Try randomising the salt rounds
-        const salt = await bcrypt.genSalt(saltRound);
-        const bcryptPassword = await bcrypt.hash(user_password, salt); // encrypted password
-
-        // insert user into database
-        const newUser = await pool.query("INSERT INTO users (user_name, user_email, user_password) VALUES ($1, $2, $3) RETURNING *", [user_name, user_email, bcryptPassword]);
-
-        // generate jwt token
-        const token = jwtGenerator(newUser.rows[0].user_id);
-        res.json({ token });
 
     } catch (error) {
         console.error(error.message);
@@ -59,6 +60,15 @@ router.post("/login", validInfo, async (req, res) => {
         const token = jwtGenerator(user.rows[0].user_id);
         res.json({ token });
 
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error");
+    }
+})
+
+router.get("/is-verified", authorization, (req, res) => {
+    try {
+        res.json(true);
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Server Error");
