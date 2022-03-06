@@ -12,6 +12,8 @@ app.use(cors())
 // ROUTES
 // Signup and Login Routes
 app.use("/auth", require("./app/Routes/jwtAuth"))
+// Dashboard Routes
+app.use("/dashboard", require("./app/Routes/dashboard"))
 
 //listener
 app.listen(PORT, () => {
